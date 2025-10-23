@@ -1,0 +1,82 @@
+/* day column width + dot size that scale with viewport */
+:root {
+  --mx-dayw: clamp(26px, 3.2vw, 36px);   /* width of each day column */
+  --mx-dot:  clamp(10px, 1.9vw, 14px);   /* dot diameter */
+  /* --mx-namew is set from JS; fallback 180px below */
+}
+
+.matrix {
+  margin-top: 10px;
+  width: 100%;
+  max-width: 1100px;
+  min-width: 0;
+  margin: 0 auto;
+
+
+  &__legend { display:flex; align-items:center; gap: 10px; margin: 6px 0 12px; }
+
+  &__table {
+    position: relative;
+    overflow-x: auto;
+    overflow-y: hidden;
+    max-width: 100%;
+    border:1px solid var(--line);
+    border-radius: 10px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* 👇 first track uses the measured width (falls back to 180px) */
+  &__head,
+  &__row {
+    display: grid;
+    grid-template-columns: minmax(100px, var(--mx-namew, 180px));
+    grid-auto-columns: var(--mx-dayw);
+    grid-auto-flow: column;
+    min-width: max-content;  /* allow horizontal scroll for days */
+  }
+
+  &__cell {
+    border-bottom:1px solid var(--line);
+    border-right:1px solid var(--line);
+    display:grid; place-items:center;
+    height: 36px;
+    background: #fff;
+    white-space: nowrap;
+  }
+
+  &__cell--head {
+    font-size: 12px; color: var(--muted); line-height: 1.1;
+  }
+
+  /* sticky first column */
+  &__cell--rowhead {
+    position: sticky; left: 0; z-index: 3;
+    background: #fff;
+    padding: 0 10px;                 /* <-- include in measurement padding */
+    justify-content: start; text-align: left;
+    font-weight: 600;
+    font-size: clamp(12px, 2.4vw, 14px);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    box-shadow: 1px 0 0 var(--line);
+  }
+
+  /* the span we measure */
+  &__name { display:inline-block; }
+
+  .dot { width: var(--mx-dot); height: var(--mx-dot); border-radius: 999px; display:inline-block;
+    &--ok { background:#22c55e; }
+    &--no { background:#ef4444; }
+  }
+}
+
+/* You can still keep the earlier mobile rules; they’ll cap the measured width */
+@media (max-width: 520px) {
+  .matrix__head, .matrix__row {
+    grid-template-columns: minmax(100px, var(--mx-namew, 160px));
+  }
+}
+@media (max-width: 380px) {
+  .matrix__head, .matrix__row {
+    grid-template-columns: minmax(90px, var(--mx-namew, 140px));
+  }
+}

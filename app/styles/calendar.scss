@@ -1,0 +1,72 @@
+$cal-square-break: 1100px;
+
+.cal {
+  width: 100%;
+  max-width: 1100px;
+  min-width: 0;
+  margin: 0 auto;
+
+  &__bar {
+    display:flex; align-items:center; justify-content:space-between; margin-bottom: 8px;
+    flex-wrap: wrap; gap: 8px;
+    button { border: 1px solid var(--line); background:#f2f5f9; padding:6px 10px; border-radius:8px; cursor:pointer; }
+    h3 { font-size: 1.25rem; }
+  }
+
+  /* allow columns to fully compress */
+  &__head {
+    display:grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    margin-bottom: 8px; color: var(--muted);
+    min-width: 0;
+
+    .cal__dow { text-align:center; padding: 4px 0; overflow: hidden; text-overflow: ellipsis; }
+  }
+
+  &__grid {
+    display:grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: clamp(2px, 1.2vw, 10px);   /* tighter on very small screens */
+    width: 100%;
+    min-width: 0;
+  }
+
+  &__cell {
+    position: relative;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #fff;
+    cursor: pointer;
+
+    /* square behavior */
+    aspect-ratio: 1 / 1;
+    min-height: 86px; /* rectangular until breakpoint */
+    
+    @media (max-width: $cal-square-break) {
+      min-height: auto; /* true squares below this width */
+    }
+
+    min-width: 0;
+
+    &.is-faded { opacity: .5; }
+    &.is-booked { background: #fbf5f5; cursor: not-allowed; }
+    &.is-start { outline: 2px dashed #0a84ff; }
+  }
+
+  /* ✅ use variable insets so badge/date don't collide on tiny cells */
+  &__date {
+    position: absolute; top: var(--cal-inset, 8px); right: var(--cal-inset, 10px);
+    font-weight: 700; color: #2a3441;
+    font-size: var(--cal-date-fs);
+    pointer-events: none;
+  }
+
+  &__badge {
+    position:absolute; left: var(--cal-inset, 10px); bottom: var(--cal-inset, 10px);
+    width: var(--cal-badge); height: var(--cal-badge);
+    border-radius: 999px; display:grid; place-items:center;
+    color: inherit; font-weight: 800;
+    font-size: clamp(9px, 2.6vw, 12px); /* shrink the letters too */
+    pointer-events: none;
+  }
+}

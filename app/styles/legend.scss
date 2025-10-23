@@ -1,0 +1,47 @@
+.legend {
+  display:grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 8px; 
+  padding-top: 1.5em; width: 100%;
+  max-width: 1100px;
+  min-width: 0;
+  margin: 0 auto;
+  &__item { display:flex; align-items:center; gap:8px; font-size: 14px;
+    input { margin-right: 6px; }
+  }
+  &__dot { width: 12px; height: 12px; border-radius: 999px; display:inline-block; }
+}
+.legend--inline {
+  display:flex; flex-wrap:wrap; gap: 14px; align-items:center;
+  .legend__circle { width: 16px; height:16px; border-radius:999px; color:inherit; font-size:10px; display:grid; place-items:center; margin-right:6px; }
+  .legend__item { display:flex; align-items:center; gap: 6px; }
+}
+
+/* modal (shared with BookingModal) */
+.modal { position:fixed; inset:0; background: rgba(0,0,0,.25); display:grid; place-items:center;
+  &__card { background:#fff; padding: 16px; border-radius: 12px; width: min(720px, 96vw); }
+  &__row { display:flex; gap: 8px; margin-top: 10px; }
+  button { padding: 8px 12px; border-radius: 10px; border: none; background:#0a84ff; color:#fff; cursor:pointer; }
+  .ghost { background:#eef2f8; color:#223; }
+  input[type="text"], input:not([type]) { width:100%; padding:10px; border:1px solid var(--line); border-radius: 10px; }
+}
+
+.modal label { display:block; font-size: 13px; margin-bottom: 4px; color: #3a4352; }
+.modal input[type="date"] { width:100%; padding:10px; border:1px solid var(--line); border-radius:10px; }
+
+.modal__row { display:flex; gap:8px; margin-top:12px; }
+button.danger { background:#ffecec; color:#c0392b; border:1px solid #ffd0d0; }
+button.ghost { background:#f3f6fb; border:1px solid var(--line); }
+
+.modal__busy {
+  margin-top: 14px;
+  padding: 10px 12px;
+  border: 1px dashed var(--line);
+  border-radius: 10px;
+  background: #f7f9fd;
+  color: #334155;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* (optional) show disabled form affordance */
+input[disabled], button[disabled] { opacity: .65; cursor: not-allowed; }
+

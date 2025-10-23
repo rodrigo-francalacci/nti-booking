@@ -1,0 +1,28 @@
+/* Full-screen blocking overlay – no mixins, just nesting */
+.busy {
+  position: fixed; inset: 0;
+  background: black;
+  backdrop-filter: blur(2px);
+  display: grid; place-items: center;
+  z-index: 9999;            /* above everything */
+  pointer-events: all;      /* block all clicks */
+
+  &__card {
+    display: grid; gap: 10px; justify-items: center;
+    background: #ffffff; border: 1px solid #e7eef7; border-radius: 14px;
+    padding: 22px 26px;
+    box-shadow: 0 10px 30px rgba(16, 24, 40, 0.08);
+  }
+
+  &__spinner {
+    width: 28px; height: 28px; border-radius: 999px;
+    border: 3px solid #e5edf7; border-top-color: #0a84ff;
+    animation: busy-spin 0.9s linear infinite;
+  }
+
+  &__text {
+    font-weight: 700; color: black;
+  }
+}
+
+@keyframes busy-spin { to { transform: rotate(360deg); } }
