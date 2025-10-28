@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import EquipmentList from "./components/EquipmentList";
 import Calendar from "./components/Calendar";
 import BookingModal from "./components/BookingModal";
@@ -9,39 +9,18 @@ import AvailabilityMatrix from "./components/AvailabilityMatrix";
 import ContextMenu from "./components/ContextMenu";
 import "@/app/globals.scss";
 
-type Person = {
-  _id: string;
-  fullName: string;
-  initials: string;
-  color: string;
-  location?: string;
-};
-
-type Equipment = {
-  _id: string;
-  name: string;
-  assetNumber?: string;
-  serialNumber?: string;
-  calibrationDueAt?: string;
-};
-
+type Person = { _id: string; fullName: string; initials: string; color: string; location?: string; };
+type Equipment = { _id: string; name: string; assetNumber?: string; serialNumber?: string; calibrationDueAt?: string; };
 type ViewMode = "calendar" | "matrix";
 
 export default function AppPage() {
   const [people, setPeople] = useState<Person[]>([]);
   const [equipment, setEquipment] = useState<Equipment[]>([]);
   const [selectedEquipment, setSelectedEquipment] = useState<Equipment | null>(null);
-  const [month, setMonth] = useState(new Date()); // controls calendar + matrix
+  const [month, setMonth] = useState(new Date());
   const [createModal, setCreateModal] = useState<{ start: string; end: string } | null>(null);
-
-  // NEW: remember last view
-  const [view, setView] = useState<ViewMode>(() => {
-    if (typeof window === "undefined") return "calendar";
-    return (localStorage.getItem("nti.view") as ViewMode) || "calendar";
-  });
-  useEffect(() => {
-    localStorage.setItem("nti.view", view);
-  }, [view]);
+  const [view, setView] = useState<ViewMode>(() => (typeof window === "undefined" ? "calendar" : (localStorage.getItem("nti.view") as ViewMode) || "calendar"));
+  useEffect(() => localStorage.setItem("nti.view", view), [view]);
 
   useEffect(() => {
     (async () => {
@@ -55,7 +34,6 @@ export default function AppPage() {
     })();
   }, []);
 
-  // listen for "edit-booking" from ContextMenu to open edit modal
   const [editBooking, setEditBooking] = useState<any | null>(null);
   useEffect(() => {
     const h = (ev: Event) => setEditBooking((ev as CustomEvent).detail);
@@ -76,10 +54,9 @@ export default function AppPage() {
 
       <main className="shell__main">
         <div className="main__row">
-         {/*  <h2>{view === "calendar" ? "Calendar" : "Availability"}</h2> */}
-          <a href="/report" target="_blank" rel="noopener" className="btn">Usage Report</a>
+          <h2>{view === "calendar" ? "Calendar" : "Availability"}</h2>
+
           <div className="main__toolbar">
-           
             <div className="seg" role="tablist" aria-label="Switch view">
               <button
                 role="tab"
@@ -87,7 +64,7 @@ export default function AppPage() {
                 className={`seg__btn ${view === "calendar" ? "is-active" : ""}`}
                 onClick={() => setView("calendar")}
               >
-                {selectedEquipment?.name} - Calendar
+                Calendar
               </button>
               <button
                 role="tab"
@@ -98,23 +75,35 @@ export default function AppPage() {
                 Matrix
               </button>
             </div>
+            <a href="/report" target="_blank" rel="noopener" className="btn">Usage Report</a>
           </div>
         </div>
 
-        {view === "calendar" && selectedEquipment && (
-          <Calendar
-            month={month}
-            onMonthChange={setMonth}
-            equipmentId={selectedEquipment._id}
-            onPickRange={(start, end) => setCreateModal({ start, end })}
-          />
-        )}
+        {/* NEW: two-column content area — calendar + legend (legend only for Calendar view) */}
+        <div className={`main__content ${view === "matrix" ? "is-matrix" : ""}`}>
+          {view === "calendar" && selectedEquipment && (
+            <div className="main__calendar">
+              <Calendar
+                month={month}
+                onMonthChange={setMonth}
+                equipmentId={selectedEquipment._id}
+                onPickRange={(start, end) => setCreateModal({ start, end })}
+              />
+            </div>
+          )}
 
-         {view === "calendar" && <Legend people={people} />}
+          {view === "calendar" && (
+            <aside className="main__legend">
+              <Legend people={people} stacked />
+            </aside>
+          )}
 
-        {view === "matrix" && (
-          <AvailabilityMatrix month={month} equipment={equipment} />
-        )}
+          {view === "matrix" && (
+            <div className="main__calendar">
+              <AvailabilityMatrix month={month} equipment={equipment} />
+            </div>
+          )}
+        </div>
       </main>
 
       {createModal && selectedEquipment && (

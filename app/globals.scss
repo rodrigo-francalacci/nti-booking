@@ -27,41 +27,12 @@ h1, h2, h3 { margin: 0 0 .75rem; }
   margin: 0 auto;
 }
 
-/* --- layout grid --- */
-.shell {
-  display: grid;
-  grid-template-columns: var(--left-col) minmax(0, 1fr);  /* ⬅ wider left, calendar gets slightly narrower */
-  gap: var(--gap);
-  padding: var(--gap);
-
-  /* keep calendar able to shrink */
-  &__main { min-width: 0; }
-
-  /* stack on smaller screens as before */
-  @media (max-width: 960px) {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* optional: gently adapt the left width as the screen tightens */
-@media (max-width: 1400px) {
-  :root { --left-col: clamp(320px, 24vw, 400px); }
-}
-@media (max-width: 1200px) {
-  :root { --left-col: clamp(300px, 22vw, 360px); }
-}
-
-.main__row {
-  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
-  width: 100%;
-  max-width: 1100px;
-  min-width: 0;
-  margin: 0 auto;
-}
-
+/* --- app actions / buttons / misc --- */
 .btn, button {
   &[disabled] { opacity: .6; cursor: not-allowed; }
 }
+.btn { display:inline-block; padding:6px 10px; border-radius:10px; background:#0a84ff; color:#fff; text-decoration:none; font-weight:600; }
+.btn:hover { filter: brightness(0.96); }
 
 .spinner {
   width: 14px; height: 14px;
@@ -77,13 +48,20 @@ h1, h2, h3 { margin: 0 0 .75rem; }
 /* optional: soften modal while busy */
 .modal[aria-busy="true"] .modal__card { filter: saturate(.9); }
 
+/* --- top toolbar (view switch + report link) --- */
+.main__row {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  width: 100%;
+  max-width: 1100px;
+  min-width: 0;
+  margin: 0 auto;
+}
 .main__toolbar {
   display: flex;
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
 }
-
 .seg {
   display: inline-flex;
   gap: 4px;
@@ -105,11 +83,95 @@ h1, h2, h3 { margin: 0 0 .75rem; }
   box-shadow: 0 1px 1px rgba(16,24,40,0.06);
 }
 
-.btn { display:inline-block; padding:6px 10px; border-radius:10px; background:#0a84ff; color:#fff; text-decoration:none; font-weight:600; }
-.btn:hover { filter: brightness(0.96); }
+/* ---------- Main shell layout (equipment list + content) ---------- */
+.shell {
+  display: grid;
+  grid-template-columns: var(--left-col) minmax(0, 1fr);  /* ⬅ wider left, calendar gets slightly narrower */
+  gap: var(--gap);
+  padding: var(--gap);
 
+  /* keep calendar/content able to shrink */
+  &__main { min-width: 0; }
 
+  /* stack on smaller screens */
+  @media (max-width: 960px) {
+    grid-template-columns: 1fr;
+  }
+}
 
+/* optional: gently adapt the left width as the screen tightens */
+@media (max-width: 1400px) {
+  :root { --left-col: clamp(320px, 24vw, 400px); }
+}
+@media (max-width: 1200px) {
+  :root { --left-col: clamp(300px, 22vw, 360px); }
+}
+
+/* ---------- NEW: content area with right legend ---------- */
+.main__content {
+  display: grid;
+  grid-template-columns: 1fr 280px;        /* calendar grows, legend fixed width */
+  gap: 16px;
+  align-items: start;
+}
+.main__calendar { min-width: 0; }          /* allow grid child to shrink */
+
+.main__legend {
+  position: sticky;
+  top: 12px;
+  max-height: calc(100dvh - 120px);
+  overflow: auto;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 12px;
+}
+
+/* In Matrix view, use single column (no right legend) */
+.main__content.is-matrix { grid-template-columns: 1fr; }
+
+/* When the page is narrower, stack legend below calendar */
+@media (max-width: 1200px) {
+  .main__content { grid-template-columns: 1fr; }
+  .main__legend  { position: static; max-height: none; }
+}
+
+/* ---------- Legend styles ---------- */
+/* stacked = one per line (used in right sidebar) */
+.legend--stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.legend--stack .legend__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 10px;
+}
+.legend__circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 12px;
+  /* subtle edge so very light colors (e.g. white) remain visible */
+  border: 1px solid rgba(0,0,0,.06);
+}
+.legend__name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* keep your inline legend styling available if needed elsewhere */
+.legend--inline {
+  display: flex; flex-wrap: wrap; gap: 10px;
+}
+.legend--inline .legend__item { display: inline-flex; align-items: center; gap: 8px; }
 
 /* ---------- Mobile tuning for calendar & layout ---------- */
 @media (max-width: 520px) {
@@ -129,4 +191,3 @@ h1, h2, h3 { margin: 0 0 .75rem; }
     --cal-inset: 3px;
   }
 }
-
