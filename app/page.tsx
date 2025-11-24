@@ -54,7 +54,15 @@ export default function AppPage() {
 
       <main className="shell__main">
         <div className="main__row">
-          <h2>{view === "calendar" ? "Calendar" : "Availability"}</h2>
+          
+
+          <h2>
+            {view === "calendar"
+              ? `${selectedEquipment ? selectedEquipment.name : ""} - Calendar`
+              : "Availability"}
+          </h2>
+
+
 
           <div className="main__toolbar">
             <div className="seg" role="tablist" aria-label="Switch view">

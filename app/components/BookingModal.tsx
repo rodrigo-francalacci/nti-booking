@@ -49,15 +49,28 @@ export default function BookingModal({
     return true;
   }
 
+  // Helper: convert "YYYY-MM-DD" -> ISO at UTC noon (e.g. "2025-11-24T12:00:00.000Z")
+    function ymdToUtcNoonIso(ymd: string) {
+
+      
+     return ymd
+    }
+
+
   async function save() {
     if (!validateRange()) return;
 
     await withBusy(async () => {
       await nextFrame(); // ✅ let overlay paint
 
+      const startPayload = ymdToUtcNoonIso(sDate);
+      const endPayload   = ymdToUtcNoonIso(eDate);
+
       if (mode === "create") {
         if (!equipment?._id) return alert("Missing equipment.");
         if (!personId) return alert("Please select a person.");
+
+        
 
         const r = await fetch("/api/bookings", {
           method: "POST",
@@ -65,8 +78,8 @@ export default function BookingModal({
           body: JSON.stringify({
             equipmentId: equipment._id,
             personId,
-            startDate: sDate,
-            endDate: eDate,
+            startDate: startPayload,
+            endDate: endPayload,
             note,
           }),
         });
@@ -77,7 +90,7 @@ export default function BookingModal({
         const r = await fetch(`/api/bookings/${booking._id}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ startDate: sDate, endDate: eDate, note }),
+          body: JSON.stringify({ startDate: startPayload, endDate: endPayload, note }),
         });
         if (r.status === 409) return alert("Those dates clash with an existing booking.");
         if (!r.ok) return alert("Could not update booking.");
